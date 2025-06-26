@@ -184,7 +184,10 @@ def correct_NIFTI_image(model_path,path_2_4D_scan, save_path, ref_phase_1=None, 
     ref_img_2 = np.pad(ref_img_2, ((extra_top, extra_bottom), (extra_left, extra_right), (extra_front, extra_back)),mode='constant', constant_values=-1) 
 
 
-    model_input = np.stack((ref_img_1, art_img, ref_img_2))
+    if add_artificial_phase_shadow == True:
+        model_input = np.stack((art_img, ref_img_1, ref_img_2)) # PH model was trained in old configuration of reference phases.
+    else:
+        model_input = np.stack((ref_img_1, art_img, ref_img_2)) # Interp model was trained on this order of phases.
     print('Model Input Shape =',model_input.shape)
 
     input_subject     = tio.Subject(tlc = tio.ScalarImage(tensor = model_input))
